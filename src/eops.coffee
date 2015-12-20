@@ -89,7 +89,7 @@ catch e
   # Nada
 
 program
-  .version('2.4.0')
+  .version('2.5.0')
   .usage('[options] <emails.csv>')
   .option('-c --compare <file>', 'hashed emails (already_hashed.csv)')
   .option('-e --case <alter>', 'whether to upper or lower case the email before hashing (upper, lower, as-is)', /^(upper|lower|as\-is)$/i, 'as-is')
