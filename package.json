@@ -1,0 +1,36 @@
+{
+  "name": "email-list-operations",
+  "version": "2.4.0",
+  "description": "You work in politics. You're always passing around CRM-ish CSVs. This library is for you.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/walker/email-list-operations.git"
+  },
+  "keywords": [
+    "email",
+    "hashing",
+    "politics"
+  ],
+  "author": "Walker Hamilton",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "2.9.0",
+    "csv-parser": "1.8.0",
+    "lodash": "3.10.1",
+    "which": "1.2.0",
+    "email-validator": "1.0.3"
+  },
+  "devDependencies": {
+    "coffee-script": "1.9.3"
+  },
+  "bin": {
+    "eops": "./bin/eops"
+  },
+  "engines": {
+    "node": "4.2.0"
+  },
+  "bugs": {
+    "url": "https://github.com/walker/email-list-operations/issues"
+  },
+  "homepage": "https://github.com/walker/email-list-operations#readme"
+}
