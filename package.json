@@ -1,6 +1,6 @@
 {
   "name": "email-list-operations",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "description": "You work in politics. You're always passing around CRM-ish CSVs. This library is for you.",
   "repository": {
     "type": "git",
@@ -15,10 +15,10 @@
   "license": "MIT",
   "dependencies": {
     "commander": "2.9.0",
-    "csv-parser": "1.8.1",
-    "lodash": "3.10.1",
-    "which": "1.2.0",
-    "email-validator": "1.0.3"
+    "csv-parser": "1.11.0",
+    "lodash": "4.15.0",
+    "which": "1.2.10",
+    "email-validator": "1.0.5"
   },
   "devDependencies": {
     "coffee-script": "1.10.0"
@@ -27,7 +27,7 @@
     "eops": "./bin/eops"
   },
   "engines": {
-    "node": "5.3.0"
+    "node": "6.5.0"
   },
   "bugs": {
     "url": "https://github.com/walker/email-list-operations/issues"
