@@ -16,7 +16,7 @@
   "dependencies": {
     "commander": "2.9.0",
     "csv-parser": "1.11.0",
-    "lodash": ~>"4.17.11",
+    "lodash": "~>4.17.11",
     "which": "1.2.10",
     "email-validator": "1.0.5"
   },
