@@ -1,6 +1,6 @@
 {
   "name": "email-list-operations",
-  "version": "2.5.3",
+  "version": "2.5.4",
   "description": "You work in politics. You're always passing around CRM-ish CSVs. This library is for you.",
   "repository": {
     "type": "git",
