@@ -14,11 +14,11 @@
   "author": "Walker Hamilton",
   "license": "MIT",
   "dependencies": {
-    "commander": "2.9.0",
-    "csv-parser": "1.11.0",
-    "lodash": "~>4.17.11",
-    "which": "1.2.10",
-    "email-validator": "1.0.5"
+    "commander": "8.1.0",
+    "csv-parser": "3.0.0",
+    "lodash": "4.17.21",
+    "which": "2.0.2",
+    "email-validator": "2.0.4"
   },
   "devDependencies": {
     "coffee-script": "1.10.0"

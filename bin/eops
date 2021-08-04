@@ -2,267 +2,267 @@
 ;
 var attempt_fix, crypto, csv, do_hash, e, email, error, error1, error2, error_file, fs, hashed_r, in_array, log_lib, output_file_check, program;
 
-  program = require('commander');
+program = require('commander');
 
-  fs = require('fs');
+fs = require('fs');
 
-  csv = require('csv-parser');
+csv = require('csv-parser');
 
-  crypto = require('crypto');
+crypto = require('crypto');
 
-  email = require('email-validator');
+email = require('email-validator');
 
-  in_array = function(needle, haystack) {
-    var i, key, len;
-    for (i = 0, len = haystack.length; i < len; i++) {
-      key = haystack[i];
-      if (haystack[key] === needle) {
-        return true;
-      }
+in_array = function(needle, haystack) {
+  var i, key, len;
+  for (i = 0, len = haystack.length; i < len; i++) {
+    key = haystack[i];
+    if (haystack[key] === needle) {
+      return true;
     }
-    return false;
-  };
-
-  log_lib = function() {
-    console.log('');
-    console.log('Most org/sites doing matching want to see samples to know you "did it right". You can send them the below.');
-    console.log('');
-    console.log("Here's the samples:");
-    return console.log('');
-  };
-
-  do_hash = function(unhashed, program) {
-    var cased_email, hashed_email;
-    if (program.args[0] === 'demsdotcom' || program.args[0] === 'dailykos') {
-      program.hash = 'md5';
-      program.alter = 'upper';
-    }
-    if (program.args[0] === 'google') {
-      program.hash = 'sha256';
-      program.alter = 'lower';
-    } else if (program.args[0] === 'care2' && program.salt) {
-      program.hash = 'sha1';
-      program.alter = 'as-is';
-      unhashed = program.salt + unhashed;
-    } else if (program.args[0] === 'care2' && !program.salt) {
-      console.log('If you want to do Care2 hashing, you must supply a salt string.');
-      console.log('');
-      console.log('For example:');
-      console.log('eops --preset care2 --salt 8zQgWkEKYH4VxHcHN3ecUiFEH emails.csv');
-      process.exit(1);
-    } else if (program.args[0] === 'vindico') {
-      program.hash = 'md5';
-      program.alter = 'as-is';
-    } else if (program.args[0] === 'upworthy') {
-      program.hash = 'md5';
-      program.alter = 'lower';
-    }
-    switch (program.alter) {
-      case 'upper':
-        cased_email = unhashed[program.header].toUpperCase();
-        break;
-      case 'lower':
-        cased_email = unhashed[program.header].toLowerCase();
-        break;
-      case 'as-is':
-        cased_email = unhashed[program.header];
-        break;
-      default:
-        cased_email = unhashed[program.header];
-    }
-    switch (program.hash) {
-      case 'md5':
-        hashed_email = crypto.createHash('md5').update(cased_email).digest('hex');
-        break;
-      case 'sha1':
-        hashed_email = crypto.createHash('sha1').update(cased_email).digest('hex');
-        break;
-      case 'sha256':
-        hashed_email = crypto.createHash('sha256').update(cased_email).digest('hex');
-        break;
-      default:
-        hashed_email = crypto.createHash('md5').update(cased_email).digest('hex');
-    }
-    return hashed_email;
-  };
-
-  attempt_fix = function(email) {
-    email = email.replace('.@', '@');
-    email = email.replace('..', '.');
-    email = email.replace('`', '');
-    email = email.replace('\+[a-zA-Z0-9\-\_\+]{0,}\@', '@');
-    email = email.replace(/\.com\.com$/, '.com');
-    email = email.replace(/\@gnail/, '@gmail');
-    email = email.replace(/\@aol\.com\@aol\.com$/, '@aol.com');
-    email = email.replace(/\@gmail\.com\@gmail\.com$/, '@gmail.com');
-    email = email.replace(/\@yahoo\.com\@yahoo\.com$/, '@yahoo.com');
-    email = email.replace(/\@hotmail\.com\@hotmail\.com$/, '@hotmail.com');
-    email = email.replace(/\@gmail$/, '@gmail.com');
-    email = email.replace(/\@rcn$/, '@rcn.com');
-    email = email.replace(/\@aol$/, '@aol.com');
-    email = email.replace(/\@ymail$/, '@ymail.com');
-    email = email.replace(/\@cox$/, '@cox.net');
-    email = email.replace(/\@sbcglobal$/, '@sbcglobal.net');
-    email = email.replace(/\@charter$/, '@charter.net');
-    email = email.replace(/\@hotmail$/, '@hotmail.com');
-    email = email.replace(/\@yahoo$/, '@yahoo.com');
-    email = email.replace(/\@msn$/, '@msn.com');
-    return email;
-  };
-
-  try {
-    error_file = fs.statSync('eops_errors.log');
-    if (program.output && output_file_check.isFile()) {
-      fs.unlinkSync(program.output);
-    }
-  } catch (error) {
-    e = error;
   }
+  return false;
+};
 
-  program.version('2.5.3').usage('[options] <emails.csv>').option('-c --compare <file>', 'hashed emails (already_hashed.csv)').option('-e --case <alter>', 'whether to upper or lower case the email before hashing (upper, lower, as-is)', /^(upper|lower|as\-is)$/i, 'as-is').option('-h --header <header>', 'header on column that you want to hash. Defaults to "email".', /^([a-zA-Z0-9]{1,})$/i, 'email').option('-o --output <output>', 'file name (exists.csv)').option('-r --hash <hash>', 'hash library (sha1, md5)', /^(sha|md5)$/i, 'md5').option('-s --salt <salt>', 'salt string. leave empty to not use a salt').option('-p --preset <preset>', 'Convenience preset for poitical services and publications (google, dailykos, demsdotcom, vindico, care2, upworthy)', /^(google|dailykos|demsdotcom|vindico|care2|upworthy)$/i).parse(process.argv);
+log_lib = function() {
+  console.log('');
+  console.log('Most org/sites doing matching want to see samples to know you "did it right". You can send them the below.');
+  console.log('');
+  console.log("Here's the samples:");
+  return console.log('');
+};
 
-  if (!program.args[0]) {
-    console.log('No file input provided');
-  } else if (program.args[0] === 'demsdotcom' || program.args[0] === 'dailykos') {
-    if (program.args[0] === 'demsdotcom') {
-      console.log('Democrats.com Hashing');
-    } else if (program.args[0] === 'dailykos') {
-      console.log('Daily Kos Hashing');
-    }
-    log_lib();
-    console.log('someone@someTHing.com');
-    console.log('someone@something.org');
-    console.log('someone@something.net');
-    console.log('');
-    console.log(crypto.createHash('md5').update('someone@someTHing.com'.toUpperCase()).digest('hex'));
-    console.log(crypto.createHash('md5').update('someone@something.org'.toUpperCase()).digest('hex'));
-    console.log(crypto.createHash('md5').update('someone@something.net'.toUpperCase()).digest('hex'));
-  } else if (program.args[0] === 'google') {
-    console.log('Google Hashing');
-    log_lib();
-    console.log('someone@someTHing.com');
-    console.log('someone@something.org');
-    console.log('someone@something.net');
-    console.log('');
-    console.log(crypto.createHash('sha256').update('someone@someTHing.com'.toLowerCase()).digest('hex'));
-    console.log(crypto.createHash('sha256').update('someone@something.org'.toLowerCase()).digest('hex'));
-    console.log(crypto.createHash('sha256').update('someone@something.net'.toUpperCase()).digest('hex'));
+do_hash = function(unhashed, program) {
+  var cased_email, hashed_email;
+  if (program.args[0] === 'demsdotcom' || program.args[0] === 'dailykos') {
+    program.hash = 'md5';
+    program.alter = 'upper';
+  }
+  if (program.args[0] === 'google') {
+    program.hash = 'sha256';
+    program.alter = 'lower';
   } else if (program.args[0] === 'care2' && program.salt) {
-    console.log('Care2 Hashing');
-    log_lib();
-    console.log('someone@someTHing.com');
-    console.log('someone@something.org');
-    console.log('someone@something.net');
-    console.log('');
-    console.log(crypto.createHash('sha1').update(program.salt + 'someone@something.com').digest('hex'));
-    console.log(crypto.createHash('sha1').update(program.salt + 'someone@something.org').digest('hex'));
-    console.log(crypto.createHash('sha1').update(program.salt + 'someone@something.net').digest('hex'));
+    program.hash = 'sha1';
+    program.alter = 'as-is';
+    unhashed = program.salt + unhashed;
   } else if (program.args[0] === 'care2' && !program.salt) {
     console.log('If you want to do Care2 hashing, you must supply a salt string.');
     console.log('');
     console.log('For example:');
     console.log('eops --preset care2 --salt 8zQgWkEKYH4VxHcHN3ecUiFEH emails.csv');
+    process.exit(1);
   } else if (program.args[0] === 'vindico') {
-    console.log('Vindico Hashing');
-    log_lib();
-    console.log('someone@someTHing.com');
-    console.log('someone@something.org');
-    console.log('someone@something.net');
-    console.log('');
-    console.log(crypto.createHash('md5').update('someone@something.com').digest('hex'));
-    console.log(crypto.createHash('md5').update('someone@something.org').digest('hex'));
-    console.log(crypto.createHash('md5').update('someone@something.net').digest('hex'));
+    program.hash = 'md5';
+    program.alter = 'as-is';
   } else if (program.args[0] === 'upworthy') {
-    console.log('Upworthy Hashing');
-    log_lib();
-    console.log('someone@someTHing.com');
-    console.log('someone@something.org');
-    console.log('someone@something.net');
-    console.log('');
-    console.log(crypto.createHash('md5').update('someone@something.com'.toLowerCase()).digest('hex'));
-    console.log(crypto.createHash('md5').update('someone@something.org'.toLowerCase()).digest('hex'));
-    console.log(crypto.createHash('md5').update('someone@something.net'.toLowerCase()).digest('hex'));
-  } else {
-    if (program.compare) {
-      hashed_r = [];
-      fs.createReadStream(program.compare).pipe(csv()).on('data', function(hashed) {
-        return hashed_r[hashed_r.length] = hashed[program.header];
-      }).on('error', function(err) {
-        return console.log(err);
-      }).on('end', function() {
-        var error1, error2, output_file_check;
-        try {
-          output_file_check = fs.statSync(program.output);
-          if (program.output && output_file_check.isFile()) {
-            fs.unlinkSync(program.output);
-          }
-        } catch (error1) {
-          e = error1;
-        }
-        try {
-          return fs.createReadStream(program.args[0]).pipe(csv()).on('data', function(unhashed) {
-            var i, key, len, results, to_check;
-            if (email.validate(unhashed[program.header])) {
-              to_check = do_hash(unhashed, program);
-              results = [];
-              for (i = 0, len = hashed_r.length; i < len; i++) {
-                key = hashed_r[i];
-                if (key === to_check) {
-                  if (program.output) {
-                    results.push(fs.appendFileSync(program.output, unhashed[program.header].toLowerCase() + "\r\n"));
-                  } else {
-                    results.push(console.log(unhashed[program.header].toLowerCase()));
-                  }
-                } else {
-                  results.push(void 0);
-                }
-              }
-              return results;
-            } else {
-              return fs.appendFileSync('eops_errors.log', 'This email appears to be invalid: ' + unhashed[program.header] + "\r\n");
-            }
-          }).on('end', function() {
-            return process.exit(0);
-          }).on('error', function(err) {
-            return console.log(err);
-          });
-        } catch (error2) {
-          e = error2;
-          return console.log(e);
-        }
-      });
-    } else {
+    program.hash = 'md5';
+    program.alter = 'lower';
+  }
+  switch (program.alter) {
+    case 'upper':
+      cased_email = unhashed[program.header].toUpperCase();
+      break;
+    case 'lower':
+      cased_email = unhashed[program.header].toLowerCase();
+      break;
+    case 'as-is':
+      cased_email = unhashed[program.header];
+      break;
+    default:
+      cased_email = unhashed[program.header];
+  }
+  switch (program.hash) {
+    case 'md5':
+      hashed_email = crypto.createHash('md5').update(cased_email).digest('hex');
+      break;
+    case 'sha1':
+      hashed_email = crypto.createHash('sha1').update(cased_email).digest('hex');
+      break;
+    case 'sha256':
+      hashed_email = crypto.createHash('sha256').update(cased_email).digest('hex');
+      break;
+    default:
+      hashed_email = crypto.createHash('md5').update(cased_email).digest('hex');
+  }
+  return hashed_email;
+};
+
+attempt_fix = function(email) {
+  email = email.replace('.@', '@');
+  email = email.replace('..', '.');
+  email = email.replace('`', '');
+  email = email.replace('\+[a-zA-Z0-9\-\_\+]{0,}\@', '@');
+  email = email.replace(/\.com\.com$/, '.com');
+  email = email.replace(/\@gnail/, '@gmail');
+  email = email.replace(/\@aol\.com\@aol\.com$/, '@aol.com');
+  email = email.replace(/\@gmail\.com\@gmail\.com$/, '@gmail.com');
+  email = email.replace(/\@yahoo\.com\@yahoo\.com$/, '@yahoo.com');
+  email = email.replace(/\@hotmail\.com\@hotmail\.com$/, '@hotmail.com');
+  email = email.replace(/\@gmail$/, '@gmail.com');
+  email = email.replace(/\@rcn$/, '@rcn.com');
+  email = email.replace(/\@aol$/, '@aol.com');
+  email = email.replace(/\@ymail$/, '@ymail.com');
+  email = email.replace(/\@cox$/, '@cox.net');
+  email = email.replace(/\@sbcglobal$/, '@sbcglobal.net');
+  email = email.replace(/\@charter$/, '@charter.net');
+  email = email.replace(/\@hotmail$/, '@hotmail.com');
+  email = email.replace(/\@yahoo$/, '@yahoo.com');
+  email = email.replace(/\@msn$/, '@msn.com');
+  return email;
+};
+
+try {
+  error_file = fs.statSync('eops_errors.log');
+  if (program.output && output_file_check.isFile()) {
+    fs.unlinkSync(program.output);
+  }
+} catch (error) {
+  e = error;
+}
+
+program.version('2.5.3').usage('[options] <emails.csv>').option('-c --compare <file>', 'hashed emails (already_hashed.csv)').option('-e --case <alter>', 'whether to upper or lower case the email before hashing (upper, lower, as-is)', /^(upper|lower|as\-is)$/i, 'as-is').option('-h --header <header>', 'header on column that you want to hash. Defaults to "email".', /^([a-zA-Z0-9]{1,})$/i, 'email').option('-o --output <output>', 'file name (exists.csv)').option('-r --hash <hash>', 'hash library (sha1, md5)', /^(sha|md5)$/i, 'md5').option('-s --salt <salt>', 'salt string. leave empty to not use a salt').option('-p --preset <preset>', 'Convenience preset for poitical services and publications (google, dailykos, demsdotcom, vindico, care2, upworthy)', /^(google|dailykos|demsdotcom|vindico|care2|upworthy)$/i).parse(process.argv);
+
+if (!program.args[0]) {
+  console.log('No file input provided');
+} else if (program.args[0] === 'demsdotcom' || program.args[0] === 'dailykos') {
+  if (program.args[0] === 'demsdotcom') {
+    console.log('Democrats.com Hashing');
+  } else if (program.args[0] === 'dailykos') {
+    console.log('Daily Kos Hashing');
+  }
+  log_lib();
+  console.log('someone@someTHing.com');
+  console.log('someone@something.org');
+  console.log('someone@something.net');
+  console.log('');
+  console.log(crypto.createHash('md5').update('someone@someTHing.com'.toUpperCase()).digest('hex'));
+  console.log(crypto.createHash('md5').update('someone@something.org'.toUpperCase()).digest('hex'));
+  console.log(crypto.createHash('md5').update('someone@something.net'.toUpperCase()).digest('hex'));
+} else if (program.args[0] === 'google') {
+  console.log('Google Hashing');
+  log_lib();
+  console.log('someone@someTHing.com');
+  console.log('someone@something.org');
+  console.log('someone@something.net');
+  console.log('');
+  console.log(crypto.createHash('sha256').update('someone@someTHing.com'.toLowerCase()).digest('hex'));
+  console.log(crypto.createHash('sha256').update('someone@something.org'.toLowerCase()).digest('hex'));
+  console.log(crypto.createHash('sha256').update('someone@something.net'.toUpperCase()).digest('hex'));
+} else if (program.args[0] === 'care2' && program.salt) {
+  console.log('Care2 Hashing');
+  log_lib();
+  console.log('someone@someTHing.com');
+  console.log('someone@something.org');
+  console.log('someone@something.net');
+  console.log('');
+  console.log(crypto.createHash('sha1').update(program.salt + 'someone@something.com').digest('hex'));
+  console.log(crypto.createHash('sha1').update(program.salt + 'someone@something.org').digest('hex'));
+  console.log(crypto.createHash('sha1').update(program.salt + 'someone@something.net').digest('hex'));
+} else if (program.args[0] === 'care2' && !program.salt) {
+  console.log('If you want to do Care2 hashing, you must supply a salt string.');
+  console.log('');
+  console.log('For example:');
+  console.log('eops --preset care2 --salt 8zQgWkEKYH4VxHcHN3ecUiFEH emails.csv');
+} else if (program.args[0] === 'vindico') {
+  console.log('Vindico Hashing');
+  log_lib();
+  console.log('someone@someTHing.com');
+  console.log('someone@something.org');
+  console.log('someone@something.net');
+  console.log('');
+  console.log(crypto.createHash('md5').update('someone@something.com').digest('hex'));
+  console.log(crypto.createHash('md5').update('someone@something.org').digest('hex'));
+  console.log(crypto.createHash('md5').update('someone@something.net').digest('hex'));
+} else if (program.args[0] === 'upworthy') {
+  console.log('Upworthy Hashing');
+  log_lib();
+  console.log('someone@someTHing.com');
+  console.log('someone@something.org');
+  console.log('someone@something.net');
+  console.log('');
+  console.log(crypto.createHash('md5').update('someone@something.com'.toLowerCase()).digest('hex'));
+  console.log(crypto.createHash('md5').update('someone@something.org'.toLowerCase()).digest('hex'));
+  console.log(crypto.createHash('md5').update('someone@something.net'.toLowerCase()).digest('hex'));
+} else {
+  if (program.compare) {
+    hashed_r = [];
+    fs.createReadStream(program.compare).pipe(csv()).on('data', function(hashed) {
+      return hashed_r[hashed_r.length] = hashed[program.header];
+    }).on('error', function(err) {
+      return console.log(err);
+    }).on('end', function() {
+      var error1, error2, output_file_check;
       try {
         output_file_check = fs.statSync(program.output);
         if (program.output && output_file_check.isFile()) {
           fs.unlinkSync(program.output);
-          fs.appendFileSync(program.output, 'email' + "\r\n");
         }
       } catch (error1) {
         e = error1;
       }
       try {
-        fs.createReadStream(program.args[0]).pipe(csv()).on('data', function(unhashed) {
-          var hashed_email;
-          unhashed[program.header] = attempt_fix(unhashed[program.header]);
+        return fs.createReadStream(program.args[0]).pipe(csv()).on('data', function(unhashed) {
+          var i, key, len, results, to_check;
           if (email.validate(unhashed[program.header])) {
-            hashed_email = do_hash(unhashed, program);
-            if (program.output) {
-              return fs.appendFileSync(program.output, hashed_email + "\r\n");
-            } else {
-              return console.log(hashed_email);
+            to_check = do_hash(unhashed, program);
+            results = [];
+            for (i = 0, len = hashed_r.length; i < len; i++) {
+              key = hashed_r[i];
+              if (key === to_check) {
+                if (program.output) {
+                  results.push(fs.appendFileSync(program.output, unhashed[program.header].toLowerCase() + "\r\n"));
+                } else {
+                  results.push(console.log(unhashed[program.header].toLowerCase()));
+                }
+              } else {
+                results.push(void 0);
+              }
             }
+            return results;
           } else {
             return fs.appendFileSync('eops_errors.log', 'This email appears to be invalid: ' + unhashed[program.header] + "\r\n");
           }
         }).on('end', function() {
           return process.exit(0);
         }).on('error', function(err) {
-          return console.log('An error occurred:', err);
+          return console.log(err);
         });
       } catch (error2) {
         e = error2;
-        console.log(e);
+        return console.log(e);
       }
+    });
+  } else {
+    try {
+      output_file_check = fs.statSync(program.output);
+      if (program.output && output_file_check.isFile()) {
+        fs.unlinkSync(program.output);
+        fs.appendFileSync(program.output, 'email' + "\r\n");
+      }
+    } catch (error1) {
+      e = error1;
+    }
+    try {
+      fs.createReadStream(program.args[0]).pipe(csv()).on('data', function(unhashed) {
+        var hashed_email;
+        unhashed[program.header] = attempt_fix(unhashed[program.header]);
+        if (email.validate(unhashed[program.header])) {
+          hashed_email = do_hash(unhashed, program);
+          if (program.output) {
+            return fs.appendFileSync(program.output, hashed_email + "\r\n");
+          } else {
+            return console.log(hashed_email);
+          }
+        } else {
+          return fs.appendFileSync('eops_errors.log', 'This email appears to be invalid: ' + unhashed[program.header] + "\r\n");
+        }
+      }).on('end', function() {
+        return process.exit(0);
+      }).on('error', function(err) {
+        return console.log('An error occurred:', err);
+      });
+    } catch (error2) {
+      e = error2;
+      console.log(e);
     }
   }
+}
