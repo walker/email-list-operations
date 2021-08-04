@@ -3,3 +3,4 @@
 scripts/*.js
 *.csv
 npm-debug.log
+package-lock.json
